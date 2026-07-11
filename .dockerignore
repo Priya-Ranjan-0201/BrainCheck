@@ -1,0 +1,82 @@
+# ============================================================
+# Dockerized Quiz Application – .dockerignore
+# Excludes files from the Docker build context to:
+#   • Speed up builds (smaller context sent to the daemon)
+#   • Reduce image size (nothing unnecessary gets COPY'd)
+#   • Prevent secrets from leaking into the image
+# ============================================================
+
+# ── Python cache & bytecode ──────────────────────────────────
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+
+# ── Virtual environments ────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Environment secrets ─────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Version control ─────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# ── Database files & backups ────────────────────────────────
+instance/
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm
+**/backups/
+**/db_backups/
+
+# ── Docker files (no need to copy into the image) ───────────
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# ── Testing & quality tools ─────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+tests/
+
+# ── IDE & editor files ──────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# ── OS temporary files ──────────────────────────────────────
+Thumbs.db
+.DS_Store
+*.tmp
+*.temp
+*.bak
+*.log
+
+# ── Documentation (not needed at runtime) ────────────────────
+README.md
+LICENSE
+CHANGELOG.md
+docs/
