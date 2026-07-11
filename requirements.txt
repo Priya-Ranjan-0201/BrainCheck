@@ -1,0 +1,15 @@
+# Flask Web Application Core
+Flask>=3.0.0
+Werkzeug>=3.0.1
+
+# Database Integration (SQLAlchemy ORM)
+Flask-SQLAlchemy>=3.1.1
+
+# User Authentication Management
+Flask-Login>=0.6.3
+
+# Form Processing and CSRF Protection
+Flask-WTF>=1.2.1
+
+# Environment Variables loader (.env support)
+python-dotenv>=1.0.0
