@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Users - Admin{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="admin-users-page">
+    
+    <!-- Page Header & Breadcrumbs -->
+    <div class="row mb-4" id="users-breadcrumbs">
+        <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin Suite</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Users</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 fw-bold text-primary mb-0" id="users-title">
+                    <i class="bi bi-people-fill text-info me-2"></i> Registered Users
+                </h1>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary rounded-pill px-4" id="back-admin-btn">
+                    <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table Log -->
+    <div class="row" id="users-table-section">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm" id="users-table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="admin-users-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0" style="width: 10%;">ID</th>
+                                    <th class="border-0" style="width: 30%;">Full Name</th>
+                                    <th class="border-0" style="width: 30%;">Email Address</th>
+                                    <th class="text-center border-0" style="width: 15%;">Role</th>
+                                    <th class="pe-4 text-end border-0" style="width: 15%;">Registered Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for u in users %}
+                                    <tr id="user-row-{{ u.id }}">
+                                        <!-- ID -->
+                                        <td class="ps-4 text-muted small fw-mono">#{{ u.id }}</td>
+                                        
+                                        <!-- Full Name -->
+                                        <td class="fw-semibold text-dark">{{ u.fullname }}</td>
+                                        
+                                        <!-- Email -->
+                                        <td>{{ u.email }}</td>
+                                        
+                                        <!-- Role Badge -->
+                                        <td class="text-center">
+                                            {% if u.role == 'admin' %}
+                                                <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold">
+                                                    <i class="bi bi-shield-fill me-1"></i> Admin
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-light text-primary border border-primary px-3 py-1.5 rounded-pill">
+                                                    <i class="bi bi-person-fill me-1"></i> User
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Created At Timestamp -->
+                                        <td class="pe-4 text-end text-muted small">
+                                            {{ u.created_at.strftime('%Y-%m-%d %H:%M') }} UTC
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5" id="no-users-log">
+                                            <i class="bi bi-people fs-2 d-block mb-1"></i> No users registered in the system.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

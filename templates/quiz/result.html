@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animated-fade-in" id="result-page-container">
+    <div class="col-12 col-lg-9">
+        
+        <!-- Score Overview Banner Card -->
+        {% set passed = result.percentage >= 60.0 %}
+        <div class="card custom-card border-0 shadow-lg text-center mb-5 overflow-hidden" id="result-score-card">
+            <div class="card-header py-4 bg-{{ 'success' if passed else 'danger' }} text-white border-0" id="result-header-bg">
+                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle text-{{ 'success' if passed else 'danger' }} mb-3 shadow-sm"
+                     style="width: 70px; height: 70px;" id="result-icon-badge">
+                    <i class="bi bi-{{ 'patch-check-fill' if passed else 'shield-slash-fill' }} fs-1"></i>
+                </div>
+                <h1 class="h3 fw-bold mb-0" id="result-status-title">
+                    {{ 'Congratulations! You Passed' if passed else 'Keep Practicing!' }}
+                </h1>
+                <p class="mb-0 mt-1 opacity-75 small" id="result-status-desc">
+                    Topic: {{ result.category_name }}
+                </p>
+            </div>
+            
+            <div class="card-body p-4 p-md-5" id="result-score-body">
+                <div class="row align-items-center justify-content-center g-4">
+                    
+                    <!-- Numeric Score Box -->
+                    <div class="col-6 col-md-4 border-end" id="score-box-numeric">
+                        <span class="text-muted small d-block fw-semibold mb-1">SCORE DETAILS</span>
+                        <h2 class="fw-extrabold text-primary mb-0" id="score-display">
+                            {{ result.score }} <span class="fs-5 text-muted">/ {{ result.total }}</span>
+                        </h2>
+                    </div>
+
+                    <!-- Percentage Indicator -->
+                    <div class="col-6 col-md-4" id="score-box-percentage">
+                        <span class="text-muted small d-block fw-semibold mb-1">PERCENTAGE</span>
+                        <h2 class="fw-extrabold text-{{ 'success' if passed else 'danger' }} mb-0" id="percentage-display">
+                            {{ result.percentage }}%
+                        </h2>
+                    </div>
+
+                </div>
+
+                <!-- Action Button Redirection -->
+                <div class="d-flex justify-content-center gap-3 flex-wrap mt-5 pt-3 border-top" id="result-redirection-actions">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold transition-btn" id="result-back-dashboard-btn">
+                        <i class="bi bi-house-door me-1"></i> Back to Dashboard
+                    </a>
+                    <a href="{{ url_for('quiz.categories') }}" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold transition-btn shadow-sm" id="result-new-quiz-btn">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Take Another Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Correct Answers Detailed Breakdown -->
+        <div class="mb-4" id="answers-breakdown-section">
+            <h3 class="h4 fw-bold text-primary mb-4" id="answers-breakdown-title">
+                <i class="bi bi-card-checklist text-info me-2"></i> Review Questions
+            </h3>
+
+            {% for item in result.details %}
+                <div class="card custom-card border-0 shadow-sm mb-4 result-check-card {{ 'correct' if item.is_correct else 'incorrect' }}" id="review-card-{{ loop.index }}">
+                    <div class="card-body p-4">
+                        
+                        <!-- Question Header & Accuracy Marker -->
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <h5 class="fw-bold text-dark mb-0 pe-3" id="review-question-title-{{ loop.index }}">
+                                {{ loop.index }}. {{ item.question }}
+                            </h5>
+                            <span class="badge bg-{{ 'success' if item.is_correct else 'danger' }} px-3 py-2 rounded-pill shadow-sm" id="review-badge-{{ loop.index }}">
+                                {% if item.is_correct %}
+                                    <i class="bi bi-check-lg me-1"></i> Correct
+                                {% else %}
+                                    <i class="bi bi-x-lg me-1"></i> Incorrect
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Grid Options Summary -->
+                        <div class="row g-3" id="review-options-grid-{{ loop.index }}">
+                            
+                            <!-- Option A -->
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 border rounded-3 bg-white {% if item.correct_option == 'A' %}border-success border-2 shadow-sm{% elif item.user_answer == 'A' and not item.is_correct %}border-danger border-2{% endif %}" id="review-optA-{{ loop.index }}">
+                                    <span class="badge bg-light text-dark me-2">A</span>
+                                    <span>{{ item.option_a }}</span>
+                                    {% if item.correct_option == 'A' %}<i class="bi bi-check-circle-fill text-success float-end mt-1"></i>{% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Option B -->
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 border rounded-3 bg-white {% if item.correct_option == 'B' %}border-success border-2 shadow-sm{% elif item.user_answer == 'B' and not item.is_correct %}border-danger border-2{% endif %}" id="review-optB-{{ loop.index }}">
+                                    <span class="badge bg-light text-dark me-2">B</span>
+                                    <span>{{ item.option_b }}</span>
+                                    {% if item.correct_option == 'B' %}<i class="bi bi-check-circle-fill text-success float-end mt-1"></i>{% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Option C -->
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 border rounded-3 bg-white {% if item.correct_option == 'C' %}border-success border-2 shadow-sm{% elif item.user_answer == 'C' and not item.is_correct %}border-danger border-2{% endif %}" id="review-optC-{{ loop.index }}">
+                                    <span class="badge bg-light text-dark me-2">C</span>
+                                    <span>{{ item.option_c }}</span>
+                                    {% if item.correct_option == 'C' %}<i class="bi bi-check-circle-fill text-success float-end mt-1"></i>{% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Option D -->
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 border rounded-3 bg-white {% if item.correct_option == 'D' %}border-success border-2 shadow-sm{% elif item.user_answer == 'D' and not item.is_correct %}border-danger border-2{% endif %}" id="review-optD-{{ loop.index }}">
+                                    <span class="badge bg-light text-dark me-2">D</span>
+                                    <span>{{ question_d }} {{ item.option_d }}</span>
+                                    {% if item.correct_option == 'D' %}<i class="bi bi-check-circle-fill text-success float-end mt-1"></i>{% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Feedback Answer Match -->
+                        <div class="mt-3 pt-2 text-muted small d-flex justify-content-between flex-wrap gap-2 border-top" id="review-match-{{ loop.index }}">
+                            <div>
+                                Your Answer: 
+                                <strong class="text-{{ 'success' if item.is_correct else 'danger' }}">
+                                    {{ item.user_answer or 'Skipped/No Answer' }}
+                                </strong>
+                            </div>
+                            <div>
+                                Correct Answer: <strong class="text-success">{{ item.correct_option }}</strong>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

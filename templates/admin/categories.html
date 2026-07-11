@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Categories - Admin{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="admin-categories-page">
+    
+    <!-- Page Header & Navigation Breadcrumb -->
+    <div class="row mb-4" id="categories-breadcrumbs">
+        <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin Suite</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Categories</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 fw-bold text-primary mb-0" id="categories-title">
+                    <i class="bi bi-tags-fill text-info me-2"></i> Manage Categories
+                </h1>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary rounded-pill px-4" id="back-admin-btn">
+                    <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Operations Split Layout -->
+    <div class="row g-4" id="categories-split-layout">
+        
+        <!-- Create Category Form Panel -->
+        <div class="col-12 col-lg-4" id="create-category-panel">
+            <div class="card custom-card border-0 shadow-sm" id="create-category-card">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold text-primary mb-0" id="create-card-title">
+                        <i class="bi bi-plus-circle-fill text-success me-2"></i> Create Category
+                    </h5>
+                </div>
+                <div class="card-body">
+                    
+                    <form action="{{ url_for('admin.categories') }}" method="POST" id="create-category-form" class="needs-validation" novalidate>
+                        
+                        <!-- CSRF Token -->
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <!-- Name Input -->
+                        <div class="mb-4" id="category-name-group">
+                            <label for="name" class="form-label fw-semibold text-dark small" id="category-name-label">Category Name</label>
+                            <input type="text" class="form-control bg-light py-2" id="name" name="name" 
+                                   placeholder="e.g. Kubernetes, AWS" required id="category-name-input">
+                            <div class="invalid-feedback">
+                                Please specify a category name.
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-pill transition-btn shadow-sm" id="create-category-submit-btn">
+                            <i class="bi bi-check-circle me-1"></i> Save Category
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Table Log -->
+        <div class="col-12 col-lg-8" id="categories-list-panel">
+            <div class="card custom-card border-0 shadow-sm" id="categories-list-card">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold text-primary mb-0" id="list-card-title">
+                        <i class="bi bi-list-task text-info me-2"></i> Registered Categories
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0" id="admin-categories-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0" style="width: 10%;">ID</th>
+                                    <th class="border-0" style="width: 50%;">Category Name</th>
+                                    <th class="text-center border-0" style="width: 20%;">Total Questions</th>
+                                    <th class="pe-4 text-end border-0" style="width: 20%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in categories %}
+                                    <tr id="category-row-{{ cat.id }}">
+                                        <!-- ID -->
+                                        <td class="ps-4 text-muted small fw-mono">#{{ cat.id }}</td>
+                                        
+                                        <!-- Name -->
+                                        <td class="fw-semibold text-dark">{{ cat.name }}</td>
+                                        
+                                        <!-- Question Count -->
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-primary border border-primary px-3 py-1.5 rounded-pill">
+                                                {{ cat.question_count }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Delete Action Form -->
+                                        <td class="pe-4 text-end">
+                                            <form action="{{ url_for('admin.delete_category', category_id=cat.id) }}" 
+                                                  method="POST" 
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete the category \'{{ cat.name }}\'? This will permanently erase all associated questions and attempts.');"
+                                                  id="delete-form-{{ cat.id }}">
+                                                
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                
+                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 transition-btn" id="delete-btn-{{ cat.id }}">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-5" id="no-categories-log">
+                                            <i class="bi bi-tags fs-2 d-block mb-1"></i> No categories registered yet.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

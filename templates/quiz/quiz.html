@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz: {{ category_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animated-fade-in" id="quiz-taking-container">
+    <div class="col-12 col-lg-8">
+        
+        <!-- Timer & Progress Status Sticky Section -->
+        <div class="card custom-card border-0 shadow-sm mb-4" id="quiz-meta-panel">
+            <div class="card-body py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                
+                <!-- Subject & Progress Counter -->
+                <div>
+                    <h5 class="fw-bold text-primary mb-1" id="quiz-meta-title">
+                        <i class="bi bi-journal-code text-info me-2"></i> {{ category_name }}
+                    </h5>
+                    <div class="text-muted small fw-semibold" id="quiz-progress-text">
+                        Question <span class="text-primary fs-5">{{ current }}</span> of <span class="fs-6">{{ total }}</span>
+                    </div>
+                </div>
+
+                <!-- Session Countdown Timer Wrapper -->
+                <div class="d-flex align-items-center gap-3" id="quiz-timer-wrapper">
+                    <div class="text-end d-none d-sm-block">
+                        <small class="text-muted d-block fw-bold uppercase">Time Remaining</small>
+                    </div>
+                    <div class="px-3 py-2 bg-light-blue rounded-3 border d-flex align-items-center gap-2">
+                        <i class="bi bi-alarm-fill text-primary fs-4"></i>
+                        <span id="quiz-timer" class="fs-4 fw-bold text-primary tabular-nums" 
+                              data-time-limit="{{ time_limit }}" 
+                              data-start-time="{{ start_time }}">--:--</span>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Timer Visual Progress Bar -->
+            <div class="progress rounded-0" style="height: 4px;" id="quiz-timer-progress-container">
+                <div id="timer-progress-bar" class="progress-bar bg-info" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+        <!-- Completion Progress Bar -->
+        <div class="progress mb-4 shadow-sm" style="height: 8px;" id="quiz-completion-progress-container">
+            {% set completion_percentage = (current / total) * 100 %}
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ completion_percentage }}%;" aria-valuenow="{{ completion_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="card custom-card border-0 shadow-lg p-3 p-md-4 mb-4" id="quiz-question-card">
+            <div class="card-body">
+                
+                <!-- Question Statement -->
+                <h4 class="fw-bold text-dark mb-4 lh-base" id="question-text">
+                    {{ question.question }}
+                </h4>
+                
+                <!-- Quiz Submission Form -->
+                <form id="quiz-form" method="POST" action="{{ url_for('quiz.take_quiz') }}">
+                    
+                    <!-- CSRF Token -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <!-- Option A -->
+                    <div class="quiz-option-container">
+                        <input class="quiz-option-input" type="radio" name="selected_option" id="optionA" value="A" 
+                               {% if selected_answer == 'A' %}checked{% endif %}>
+                        <label class="quiz-option-label" for="optionA" id="label-optionA">
+                            <span class="quiz-option-badge">A</span>
+                            <span>{{ question.option_a }}</span>
+                        </label>
+                    </div>
+
+                    <!-- Option B -->
+                    <div class="quiz-option-container">
+                        <input class="quiz-option-input" type="radio" name="selected_option" id="optionB" value="B" 
+                               {% if selected_answer == 'B' %}checked{% endif %}>
+                        <label class="quiz-option-label" for="optionB" id="label-optionB">
+                            <span class="quiz-option-badge">B</span>
+                            <span>{{ question.option_b }}</span>
+                        </label>
+                    </div>
+
+                    <!-- Option C -->
+                    <div class="quiz-option-container">
+                        <input class="quiz-option-input" type="radio" name="selected_option" id="optionC" value="C" 
+                               {% if selected_answer == 'C' %}checked{% endif %}>
+                        <label class="quiz-option-label" for="optionC" id="label-optionC">
+                            <span class="quiz-option-badge">C</span>
+                            <span>{{ question.option_c }}</span>
+                        </label>
+                    </div>
+
+                    <!-- Option D -->
+                    <div class="quiz-option-container">
+                        <input class="quiz-option-input" type="radio" name="selected_option" id="optionD" value="D" 
+                               {% if selected_answer == 'D' %}checked{% endif %}>
+                        <label class="quiz-option-label" for="optionD" id="label-optionD">
+                            <span class="quiz-option-badge">D</span>
+                            <span>{{ question.option_d }}</span>
+                        </label>
+                    </div>
+
+                    <!-- Navigation Action Buttons Section -->
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top" id="quiz-navigation-section">
+                        
+                        <!-- Previous Question Button -->
+                        <button type="submit" name="action" value="previous" 
+                                class="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold transition-btn" 
+                                {% if is_first %}disabled{% endif %} id="quiz-prev-btn">
+                            <i class="bi bi-chevron-left me-1"></i> Previous
+                        </button>
+
+                        <!-- Next / Submit Button -->
+                        {% if is_last %}
+                            <button type="submit" name="action" value="submit" 
+                                    class="btn btn-success rounded-pill px-5 py-2 fw-bold text-white transition-btn shadow" 
+                                    id="quiz-submit-btn">
+                                Submit Quiz <i class="bi bi-check-circle ms-1"></i>
+                            </button>
+                        {% else %}
+                            <button type="submit" name="action" value="next" 
+                                    class="btn btn-primary rounded-pill px-4 py-2 fw-semibold transition-btn shadow-sm" 
+                                    id="quiz-next-btn">
+                                Next <i class="bi bi-chevron-right ms-1"></i>
+                            </button>
+                        {% endif %}
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

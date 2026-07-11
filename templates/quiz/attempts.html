@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}My Quiz Attempts{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="attempts-page-container">
+    
+    <!-- Page Header -->
+    <div class="row mb-4" id="attempts-header-section">
+        <div class="col-12 text-center text-md-start d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h1 class="h2 fw-extrabold text-primary mb-2" id="attempts-page-title">
+                    <i class="bi bi-clock-history me-2 text-info"></i> My Attempts History
+                </h1>
+                <p class="text-muted mb-0" id="attempts-page-subtitle">Track your learning progress and review your scores across all completed quizzes.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('quiz.categories') }}" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold transition-btn shadow-sm" id="attempts-new-quiz-btn">
+                    <i class="bi bi-play-fill me-1"></i> New Quiz
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attempts Table Card -->
+    <div class="row" id="attempts-table-section">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm" id="attempts-table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="user-attempts-table">
+                            <thead class="table-light text-muted small" id="user-attempts-table-head">
+                                <tr>
+                                    <th class="ps-4 py-3 border-0">Quiz Category</th>
+                                    <th class="py-3 border-0 text-center">Score</th>
+                                    <th class="py-3 border-0 text-center">Percentage</th>
+                                    <th class="py-3 border-0 text-center">Date & Time</th>
+                                    <th class="pe-4 py-3 border-0 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-attempts-table-body">
+                                {% for attempt in attempts %}
+                                    {% set passed = attempt.percentage >= 60.0 %}
+                                    <tr id="user-attempt-row-{{ attempt.id }}">
+                                        <!-- Category Name -->
+                                        <td class="ps-4 fw-semibold text-dark" id="user-attempt-cat-{{ attempt.id }}">
+                                            {{ attempt.category.name }}
+                                        </td>
+                                        
+                                        <!-- Raw Score -->
+                                        <td class="text-center" id="user-attempt-score-{{ attempt.id }}">
+                                            <span class="badge bg-light text-dark px-3 py-2 border rounded-pill">
+                                                {{ attempt.score }} / {{ attempt.total_questions }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Percentage -->
+                                        <td class="text-center fw-bold text-{{ 'success' if passed else 'danger' }}" id="user-attempt-perc-{{ attempt.id }}">
+                                            {{ attempt.percentage }}%
+                                        </td>
+                                        
+                                        <!-- Timestamp -->
+                                        <td class="text-center text-muted small" id="user-attempt-date-{{ attempt.id }}">
+                                            {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M:%S') }} UTC
+                                        </td>
+                                        
+                                        <!-- Pass/Fail Badge Status -->
+                                        <td class="pe-4 text-center" id="user-attempt-status-{{ attempt.id }}">
+                                            <span class="badge rounded-pill bg-{{ 'success' if passed else 'danger' }} px-3 py-2 text-white shadow-sm" id="user-attempt-badge-{{ attempt.id }}">
+                                                {% if passed %}
+                                                    <i class="bi bi-patch-check-fill me-1"></i> Passed
+                                                {% else %}
+                                                    <i class="bi bi-x-circle-fill me-1"></i> Failed
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <!-- Empty Table Row -->
+                                    <tr id="user-attempts-empty-row">
+                                        <td colspan="5" class="py-5 text-center text-muted" id="user-attempts-empty-display">
+                                            <i class="bi bi-journal-x fs-1 mb-2 d-block text-secondary"></i>
+                                            <h5 class="fw-bold text-dark mb-1">No Attempts Yet</h5>
+                                            <p class="text-muted mb-3">You haven't completed any quizzes yet. Start one to see your logs here!</p>
+                                            <a href="{{ url_for('quiz.categories') }}" class="btn btn-primary rounded-pill px-4" id="empty-start-btn">
+                                                Start Quiz
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

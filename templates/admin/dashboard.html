@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="admin-dashboard-container">
+    
+    <!-- Admin Navigation Toolbar -->
+    <div class="row mb-4" id="admin-toolbar-section">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm">
+                <div class="card-body py-3 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <h1 class="h3 fw-bold text-primary mb-1" id="admin-dashboard-title">
+                            <i class="bi bi-shield-fill text-warning me-2"></i> Administrative Suite
+                        </h1>
+                        <p class="text-muted small mb-0" id="admin-dashboard-subtitle">Manage system resources, configure quizzes, and inspect statistics.</p>
+                    </div>
+                    
+                    <!-- Quick Admin Controls -->
+                    <div class="d-flex flex-wrap gap-2" id="admin-controls-group">
+                        <a href="{{ url_for('admin.categories') }}" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill fw-semibold transition-btn" id="admin-manage-cats-btn">
+                            <i class="bi bi-tags-fill me-1"></i> Categories
+                        </a>
+                        <a href="{{ url_for('admin.questions') }}" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill fw-semibold transition-btn" id="admin-manage-quests-btn">
+                            <i class="bi bi-question-square-fill me-1"></i> Questions
+                        </a>
+                        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill fw-semibold transition-btn" id="admin-view-users-btn">
+                            <i class="bi bi-people-fill me-1"></i> Users List
+                        </a>
+                        <a href="{{ url_for('admin.attempts') }}" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill fw-semibold transition-btn" id="admin-view-attempts-btn">
+                            <i class="bi bi-file-earmark-bar-graph-fill me-1"></i> Scores Log
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Administrative Statistics Summary -->
+    <div class="row g-4 mb-4" id="admin-stats-summary">
+        
+        <!-- Total Users KPI -->
+        <div class="col-6 col-lg-3">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-kpi-users">
+                <div class="card-body d-flex align-items-center">
+                    <div class="dashboard-stat-icon bg-light text-primary me-3" id="kpi-icon-users">
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-bold d-block mb-1 uppercase">Students</span>
+                        <h4 class="fw-bold mb-0 text-primary" id="kpi-val-users">{{ total_users }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Categories KPI -->
+        <div class="col-6 col-lg-3">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-kpi-categories">
+                <div class="card-body d-flex align-items-center">
+                    <div class="dashboard-stat-icon bg-light text-success me-3" id="kpi-icon-categories">
+                        <i class="bi bi-tags fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-bold d-block mb-1 uppercase">Categories</span>
+                        <h4 class="fw-bold mb-0 text-primary" id="kpi-val-categories">{{ total_categories }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Questions KPI -->
+        <div class="col-6 col-lg-3">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-kpi-questions">
+                <div class="card-body d-flex align-items-center">
+                    <div class="dashboard-stat-icon bg-light text-warning me-3" id="kpi-icon-questions">
+                        <i class="bi bi-question-square fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-bold d-block mb-1 uppercase">Questions</span>
+                        <h4 class="fw-bold mb-0 text-primary" id="kpi-val-questions">{{ total_questions }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average System Score KPI -->
+        <div class="col-6 col-lg-3">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-kpi-avg">
+                <div class="card-body d-flex align-items-center">
+                    <div class="dashboard-stat-icon bg-light text-info me-3" id="kpi-icon-avg">
+                        <i class="bi bi-bar-chart fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-bold d-block mb-1 uppercase">Global Avg</span>
+                        <h4 class="fw-bold mb-0 text-primary" id="kpi-val-avg">{{ avg_score }}%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Category Performance Table & Recent Attempts Log Split Layout -->
+    <div class="row g-4 mb-4" id="admin-split-layout">
+        
+        <!-- Category Summary Stats -->
+        <div class="col-12 col-lg-5">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-cats-card">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold text-primary mb-0" id="admin-cats-title">
+                        <i class="bi bi-pie-chart-fill text-info me-2"></i> Category Diagnostics
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0" id="admin-cats-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0">Name</th>
+                                    <th class="text-center border-0">Questions</th>
+                                    <th class="text-center border-0">Attempts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in category_stats %}
+                                    <tr id="admin-cat-row-{{ loop.index }}">
+                                        <td class="ps-4 fw-semibold text-dark">{{ stat.name }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border px-2.5 py-1">{{ stat.questions }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light-blue text-primary border-primary border px-2.5 py-1">{{ stat.attempts }}</span>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">No data available.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Attempts Log -->
+        <div class="col-12 col-lg-7">
+            <div class="card custom-card border-0 shadow-sm h-100" id="admin-recent-card">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold text-primary mb-0" id="admin-recent-title">
+                        <i class="bi bi-clock-history text-info me-2"></i> Global Activity Log
+                    </h5>
+                    <a href="{{ url_for('admin.attempts') }}" class="small text-decoration-none text-primary fw-semibold">View All Log</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="admin-recent-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0">User</th>
+                                    <th class="border-0">Category</th>
+                                    <th class="text-center border-0">Score</th>
+                                    <th class="pe-4 text-end border-0">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for attempt in recent_attempts %}
+                                    <tr id="admin-recent-row-{{ attempt.id }}">
+                                        <!-- User Identity -->
+                                        <td class="ps-4 fw-semibold text-dark">
+                                            <div class="text-truncate" style="max-width: 140px;" title="{{ attempt.user.email }}">
+                                                {{ attempt.user.fullname }}
+                                            </div>
+                                        </td>
+                                        <!-- Quiz Category -->
+                                        <td>{{ attempt.category.name }}</td>
+                                        <!-- Percentage Score -->
+                                        <td class="text-center fw-bold text-{{ 'success' if attempt.percentage >= 60.0 else 'danger' }}">
+                                            {{ attempt.percentage }}%
+                                        </td>
+                                        <!-- Completed Time -->
+                                        <td class="pe-4 text-end text-muted small">
+                                            {{ attempt.completed_at.strftime('%m-%d %H:%M') }} UTC
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-5">
+                                            <i class="bi bi-journal-x fs-2 d-block mb-1"></i> No activity recorded yet.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+/*
+ * Quiz Application Core Design System
+ * Palette: Premium Cobalt & Slate (Blue and White dominant)
+ * Includes micro-animations, glassmorphism elements, and polished interactive states.
+ */
+
+:root {
+    --primary-blue: #1e40af;       /* Premium Dark Blue */
+    --accent-blue: #3b82f6;        /* Bright Accent Blue */
+    --light-blue: #eff6ff;         /* Gentle Background Blue tint */
+    --soft-white: #ffffff;         /* Pure white background */
+    --bg-light: #f8fafc;           /* Light gray-blue page background */
+    --text-dark: #0f172a;          /* Rich slate/navy for text readability */
+    --text-muted: #64748b;        /* Muted slate text */
+    --success-green: #10b981;     /* Vibrant Success Emerald */
+    --danger-red: #ef4444;         /* Vibrant Danger Rose */
+    --transition-speed: 0.25s;
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 20px;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+}
+
+/* ── Typography & Global Adjustments ── */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light) !important;
+    font-size: 0.95rem;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--primary-blue);
+    letter-spacing: -0.025em;
+}
+
+/* ── Custom Button Styles & Micro-Animations ── */
+.transition-btn {
+    transition: all var(--transition-speed) ease-in-out;
+}
+
+.transition-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.transition-btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-blue) !important;
+    border-color: var(--accent-blue) !important;
+}
+
+/* ── Custom Cards ── */
+.custom-card {
+    background: var(--soft-white);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--glass-shadow);
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+.custom-card.hover-action:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+}
+
+/* ── Premium MCQ Radio Button Inputs ── */
+.quiz-option-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.quiz-option-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.quiz-option-label {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--soft-white);
+    border: 2px solid #e2e8f0;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.quiz-option-label:hover {
+    border-color: var(--accent-blue);
+    background-color: var(--light-blue);
+}
+
+.quiz-option-input:checked + .quiz-option-label {
+    border-color: var(--primary-blue);
+    background-color: var(--light-blue);
+    box-shadow: 0 0 0 1px var(--primary-blue);
+}
+
+.quiz-option-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: #f1f5f9;
+    border-radius: 50%;
+    margin-right: 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.quiz-option-input:checked + .quiz-option-label .quiz-option-badge {
+    background-color: var(--primary-blue);
+    color: var(--soft-white);
+}
+
+/* ── Timer Section ── */
+.timer-card {
+    border-radius: var(--border-radius-md);
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+    color: var(--soft-white);
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.2);
+}
+
+.timer-countdown {
+    font-size: 2rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Results Verification Styles ── */
+.result-check-card {
+    border-radius: var(--border-radius-md);
+    border-left: 5px solid transparent;
+}
+
+.result-check-card.correct {
+    border-left-color: var(--success-green);
+    background-color: #ecfdf5;
+}
+
+.result-check-card.incorrect {
+    border-left-color: var(--danger-red);
+    background-color: #fff1f2;
+}
+
+/* ── Dashboard Analytics & Icon Indicators ── */
+.dashboard-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: var(--border-radius-sm);
+    font-size: 1.5rem;
+}
+
+/* ── CSS Animations ── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animated-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}

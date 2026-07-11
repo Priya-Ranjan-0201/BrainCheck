@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Global Attempts Log - Admin{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="admin-attempts-page">
+    
+    <!-- Page Header & Breadcrumbs -->
+    <div class="row mb-4" id="attempts-breadcrumbs">
+        <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin Suite</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Scores Log</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 fw-bold text-primary mb-0" id="attempts-title">
+                    <i class="bi bi-file-earmark-bar-graph-fill text-info me-2"></i> Global Quiz Attempts
+                </h1>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary rounded-pill px-4" id="back-admin-btn">
+                    <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attempts Table Log -->
+    <div class="row" id="attempts-table-section">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm" id="attempts-table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="admin-attempts-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0" style="width: 8%;">ID</th>
+                                    <th class="border-0" style="width: 22%;">Student Name</th>
+                                    <th class="border-0" style="width: 25%;">Email</th>
+                                    <th class="border-0" style="width: 15%;">Quiz Category</th>
+                                    <th class="text-center border-0" style="width: 10%;">Score</th>
+                                    <th class="text-center border-0" style="width: 10%;">Percentage</th>
+                                    <th class="pe-4 text-end border-0" style="width: 10%;">Completed Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for attempt in attempts %}
+                                    {% set passed = attempt.percentage >= 60.0 %}
+                                    <tr id="attempt-row-{{ attempt.id }}">
+                                        <!-- ID -->
+                                        <td class="ps-4 text-muted small fw-mono">#{{ attempt.id }}</td>
+                                        
+                                        <!-- User Name -->
+                                        <td class="fw-semibold text-dark">{{ attempt.user.fullname }}</td>
+                                        
+                                        <!-- User Email -->
+                                        <td>
+                                            <span class="text-muted small">{{ attempt.user.email }}</span>
+                                        </td>
+                                        
+                                        <!-- Quiz Category -->
+                                        <td>{{ attempt.category.name }}</td>
+                                        
+                                        <!-- Raw Score -->
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark px-2.5 py-1.5 border rounded-pill">
+                                                {{ attempt.score }} / {{ attempt.total_questions }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Score Percentage -->
+                                        <td class="text-center fw-bold text-{{ 'success' if passed else 'danger' }}">
+                                            {{ attempt.percentage }}%
+                                        </td>
+                                        
+                                        <!-- Timestamp -->
+                                        <td class="pe-4 text-end text-muted small">
+                                            {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }} UTC
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-5" id="no-attempts-log">
+                                            <i class="bi bi-file-earmark-bar-graph fs-2 d-block mb-1"></i> No quiz submissions recorded in the database.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

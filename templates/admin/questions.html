@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Questions - Admin{% endblock %}
+
+{% block content %}
+<div class="animated-fade-in" id="admin-questions-page">
+    
+    <!-- Page Header & Breadcrumbs -->
+    <div class="row mb-4" id="questions-breadcrumbs">
+        <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin Suite</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Questions</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 fw-bold text-primary mb-0" id="questions-title">
+                    <i class="bi bi-question-square-fill text-info me-2"></i> Manage Questions
+                </h1>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.add_question') }}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold transition-btn shadow-sm" id="admin-add-question-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add Question
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="row mb-4" id="questions-filter-toolbar">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <form method="GET" action="{{ url_for('admin.questions') }}" id="filter-form" class="row align-items-center g-3">
+                        
+                        <div class="col-12 col-md-4">
+                            <label for="category_filter" class="form-label text-muted small fw-bold mb-1" id="filter-label">Filter by Category</label>
+                            <select name="category_id" id="category_filter" class="form-select bg-light" onchange="document.getElementById('filter-form').submit();">
+                                <option value="">-- All Categories --</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        {% if selected_category %}
+                            <div class="col-12 col-md-2 mt-md-4 pt-md-2">
+                                <a href="{{ url_for('admin.questions') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3" id="clear-filter-btn">
+                                    <i class="bi bi-x-circle me-1"></i> Clear Filter
+                                </a>
+                            </div>
+                        {% endif %}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Data Logs Table -->
+    <div class="row" id="questions-table-section">
+        <div class="col-12">
+            <div class="card custom-card border-0 shadow-sm" id="questions-table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="admin-questions-table">
+                            <thead class="table-light text-muted small">
+                                <tr>
+                                    <th class="ps-4 border-0" style="width: 50%;">Question</th>
+                                    <th class="border-0" style="width: 20%;">Category</th>
+                                    <th class="text-center border-0" style="width: 10%;">Correct Option</th>
+                                    <th class="pe-4 text-end border-0" style="width: 20%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for q in questions %}
+                                    <tr id="question-row-{{ q.id }}">
+                                        <!-- Question Statement snippet -->
+                                        <td class="ps-4" id="question-text-td-{{ q.id }}">
+                                            <div class="fw-semibold text-dark text-wrap mb-1" style="max-width: 450px;">
+                                                {{ q.question }}
+                                            </div>
+                                            <!-- Mini preview of choices -->
+                                            <div class="text-muted small">
+                                                A: {{ q.option_a[:25] }}... | B: {{ q.option_b[:25] }}...
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- Category -->
+                                        <td id="question-category-td-{{ q.id }}">
+                                            <span class="badge bg-light-blue text-primary px-2.5 py-1.5 border border-primary rounded-pill">
+                                                {{ q.category.name }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Correct Answer -->
+                                        <td class="text-center" id="question-correct-td-{{ q.id }}">
+                                            <span class="badge bg-success px-3 py-1.5 rounded-circle text-white fw-bold">
+                                                {{ q.correct_option }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Actions (Edit/Delete) -->
+                                        <td class="pe-4 text-end">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                
+                                                <!-- Edit Button -->
+                                                <a href="{{ url_for('admin.edit_question', question_id=q.id) }}" 
+                                                   class="btn btn-outline-primary btn-sm rounded-pill px-3 transition-btn" id="edit-btn-{{ q.id }}">
+                                                    <i class="bi bi-pencil-fill"></i> Edit
+                                                </a>
+                                                
+                                                <!-- Delete Button Form -->
+                                                <form action="{{ url_for('admin.delete_question', question_id=q.id) }}" 
+                                                      method="POST" 
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete this question?');"
+                                                      id="delete-form-{{ q.id }}">
+                                                    
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 transition-btn" id="delete-btn-{{ q.id }}">
+                                                        <i class="bi bi-trash-fill"></i> Delete
+                                                    </button>
+                                                </form>
+                                                
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-5" id="no-questions-log">
+                                            <i class="bi bi-question-square fs-2 d-block mb-1"></i> No questions found matching search criteria.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

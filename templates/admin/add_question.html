@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Add Question - Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animated-fade-in" id="add-question-page">
+    <div class="col-12 col-lg-8">
+        
+        <!-- Breadcrumbs Navigation -->
+        <nav aria-label="breadcrumb" id="add-question-breadcrumbs" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin Suite</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.questions') }}" class="text-decoration-none">Questions</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Question</li>
+            </ol>
+        </nav>
+
+        <!-- Form Card Container -->
+        <div class="card custom-card border-0 shadow-lg mb-5" id="add-question-card">
+            <div class="card-header bg-white border-0 py-3">
+                <h4 class="fw-bold text-primary mb-0" id="add-question-card-title">
+                    <i class="bi bi-plus-square-fill text-success me-2"></i> Add New MCQ Question
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                
+                <!-- Create Question Form -->
+                <form action="{{ url_for('admin.add_question') }}" method="POST" class="needs-validation" novalidate id="add-question-form">
+                    
+                    <!-- CSRF Token -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <!-- Select Category -->
+                    <div class="mb-3" id="group-category">
+                        <label for="category_id" class="form-label fw-semibold text-dark small" id="label-category">Quiz Category</label>
+                        <select name="category_id" id="category_id" class="form-select bg-light" required id="category-select">
+                            <option value="">-- Choose Category --</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if form_data and form_data.get('category_id')|int == cat.id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a valid quiz category.
+                        </div>
+                    </div>
+
+                    <!-- Question Input Textarea -->
+                    <div class="mb-4" id="group-question-text">
+                        <label for="question" class="form-label fw-semibold text-dark small" id="label-question-text">Question Prompt</label>
+                        <textarea class="form-control bg-light" id="question" name="question" rows="3" 
+                                  placeholder="Type the multiple choice question statement here..." required id="question-textarea">{% if form_data %}{{ form_data.get('question') }}{% endif %}</textarea>
+                        <div class="invalid-feedback">
+                            Question statement is required.
+                        </div>
+                    </div>
+
+                    <!-- Option A Input -->
+                    <div class="mb-3" id="group-option-a">
+                        <label for="option_a" class="form-label fw-semibold text-dark small" id="label-option-a">Option A</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white fw-bold text-muted">A</span>
+                            <input type="text" class="form-control bg-light" id="option_a" name="option_a" 
+                                   value="{% if form_data %}{{ form_data.get('option_a') }}{% endif %}" placeholder="First choice text" required id="option-a-input">
+                            <div class="invalid-feedback">
+                                Option A content is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option B Input -->
+                    <div class="mb-3" id="group-option-b">
+                        <label for="option_b" class="form-label fw-semibold text-dark small" id="label-option-b">Option B</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white fw-bold text-muted">B</span>
+                            <input type="text" class="form-control bg-light" id="option_b" name="option_b" 
+                                   value="{% if form_data %}{{ form_data.get('option_b') }}{% endif %}" placeholder="Second choice text" required id="option-b-input">
+                            <div class="invalid-feedback">
+                                Option B content is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option C Input -->
+                    <div class="mb-3" id="group-option-c">
+                        <label for="option_c" class="form-label fw-semibold text-dark small" id="label-option-c">Option C</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white fw-bold text-muted">C</span>
+                            <input type="text" class="form-control bg-light" id="option_c" name="option_c" 
+                                   value="{% if form_data %}{{ form_data.get('option_c') }}{% endif %}" placeholder="Third choice text" required id="option-c-input">
+                            <div class="invalid-feedback">
+                                Option C content is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option D Input -->
+                    <div class="mb-4" id="group-option-d">
+                        <label for="option_d" class="form-label fw-semibold text-dark small" id="label-option-d">Option D</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white fw-bold text-muted">D</span>
+                            <input type="text" class="form-control bg-light" id="option_d" name="option_d" 
+                                   value="{% if form_data %}{{ form_data.get('option_d') }}{% endif %}" placeholder="Fourth choice text" required id="option-d-input">
+                            <div class="invalid-feedback">
+                                Option D content is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Correct Answer Dropdown Selector -->
+                    <div class="mb-5" id="group-correct">
+                        <label for="correct_option" class="form-label fw-semibold text-dark small" id="label-correct">Correct Option Choice</label>
+                        <select name="correct_option" id="correct_option" class="form-select bg-light" required id="correct-select">
+                            <option value="">-- Choose Correct Option --</option>
+                            <option value="A" {% if form_data and form_data.get('correct_option') == 'A' %}selected{% endif %}>Option A</option>
+                            <option value="B" {% if form_data and form_data.get('correct_option') == 'B' %}selected{% endif %}>Option B</option>
+                            <option value="C" {% if form_data and form_data.get('correct_option') == 'C' %}selected{% endif %}>Option C</option>
+                            <option value="D" {% if form_data and form_data.get('correct_option') == 'D' %}selected{% endif %}>Option D</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please designate a correct option letter.
+                        </div>
+                    </div>
+
+                    <!-- Operations Action buttons -->
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top" id="action-buttons-group">
+                        <a href="{{ url_for('admin.questions') }}" class="btn btn-outline-secondary rounded-pill px-4" id="cancel-question-btn">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold transition-btn shadow" id="save-question-btn">
+                            <i class="bi bi-file-earmark-check me-1"></i> Save Question
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
