@@ -1,0 +1,173 @@
+# ============================================================
+# GitHub Actions CI/CD Pipeline
+# Dockerized Quiz Application
+# ============================================================
+#
+# This workflow runs on every push and pull request to main.
+# It validates the codebase in three sequential stages:
+#
+#   1. Lint    →  Code quality checks (flake8)
+#   2. Test    →  Unit test suite (unittest)
+#   3. Docker  →  Build image + verify container starts
+#
+# All stages must pass before a PR can be merged.
+# ============================================================
+
+name: CI/CD Quiz App Pipeline
+
+# ── Trigger conditions ──────────────────────────────────────
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+# ── Cancel in-progress runs for the same branch ─────────────
+# Saves CI minutes when multiple commits are pushed quickly.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ── Global environment variables ────────────────────────────
+env:
+  PYTHON_VERSION: "3.13"
+  DOCKER_IMAGE: "quizapp-pipeline"
+  DOCKER_TAG: "latest"
+
+# ════════════════════════════════════════════════════════════
+# JOBS
+# ════════════════════════════════════════════════════════════
+
+jobs:
+
+  # ──────────────────────────────────────────────────────────
+  # Stage 1: LINT – Code quality checks
+  # ──────────────────────────────────────────────────────────
+  lint:
+    name: 🔍 Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Run flake8 linter
+        run: |
+          # Stop the build if there are Python syntax errors or
+          # undefined names (critical errors only).
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+          # Warn on all other style issues (non-blocking).
+          # max-line-length is relaxed to 120 for readability.
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+
+  # ──────────────────────────────────────────────────────────
+  # Stage 2: TEST – Unit test suite
+  # ──────────────────────────────────────────────────────────
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit test suite
+        env:
+          SECRET_KEY: "ci-testing-secret-key"
+          FLASK_ENV: "testing"
+        run: |
+          python -m unittest discover -s tests -p "test_*.py" -v
+
+  # ──────────────────────────────────────────────────────────
+  # Stage 3: DOCKER – Build & verify container
+  # ──────────────────────────────────────────────────────────
+  build-docker:
+    name: 🐳 Docker Build
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} \
+            -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} \
+            .
+
+      - name: Verify image was created
+        run: |
+          docker images ${{ env.DOCKER_IMAGE }}
+          echo "──────────────────────────────"
+          echo "✅ Docker image built successfully"
+
+      - name: Start container and health check
+        run: |
+          # Launch the container in the background
+          docker run -d \
+            --name quizapp_ci_test \
+            -p 5000:5000 \
+            -e SECRET_KEY=ci-test-secret-key \
+            -e FLASK_ENV=production \
+            -e FLASK_DEBUG=False \
+            ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
+          # Wait for Flask to initialize and seed the database
+          echo "⏳ Waiting for container to start..."
+          sleep 10
+
+          # Verify the container is still running (didn't crash)
+          docker ps | grep quizapp_ci_test
+          echo "✅ Container is running"
+
+          # Test that Flask responds (302 redirect to login or 200 OK)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
+          echo "HTTP response code: $HTTP_CODE"
+
+          if [[ "$HTTP_CODE" -ge 200 && "$HTTP_CODE" -lt 400 ]]; then
+            echo "✅ Flask application is responding correctly"
+          else
+            echo "❌ Unexpected HTTP response: $HTTP_CODE"
+            docker logs quizapp_ci_test
+            exit 1
+          fi
+
+      - name: Print container logs
+        if: always()
+        run: |
+          docker logs quizapp_ci_test 2>&1 || true
+
+      - name: Cleanup test container
+        if: always()
+        run: |
+          docker stop quizapp_ci_test || true
+          docker rm quizapp_ci_test || true

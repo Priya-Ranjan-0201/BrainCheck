@@ -1,0 +1,61 @@
+name: CI/CD Quiz App Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run unit test suite
+      run: |
+        python -m unittest discover -s tests -p "test_*.py"
+
+  build-docker:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Build Docker Image
+      run: |
+        docker build -t quizapp-pipeline:latest .
+
+    - name: Verify Docker Build (Start Container Health Check)
+      run: |
+        # Launch container in background
+        docker run -d -p 5000:5000 \
+          -e SECRET_KEY=ci-test-key \
+          -e FLASK_DEBUG=False \
+          --name quizapp_test_instance \
+          quizapp-pipeline:latest
+          
+        # Wait for container startup
+        sleep 5
+        
+        # Test endpoint response
+        curl -sI http://localhost:5000 | grep -E "HTTP/1.1 302|HTTP/1.0 302|HTTP/1.1 200|HTTP/1.0 200"
+        
+        # Cleanup
+        docker stop quizapp_test_instance
+        docker rm quizapp_test_instance
