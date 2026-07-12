@@ -1,7 +1,5 @@
-# ============================================================
-# Dockerized Quiz Application – Production Dockerfile
-# Multi-stage build for minimal image size & maximum security
-# ============================================================
+﻿# BrainCheck - Production Dockerfile
+# Multi-stage build: compile deps in stage 1, run lean in stage 2
 
 # ── Stage 1: Builder ──────────────────────────────────────────
 # Install build toolchain and compile Python dependencies into
@@ -40,7 +38,7 @@ FROM python:3.13-slim AS final
 
 # OCI / Docker metadata labels
 LABEL maintainer="PRIYE RANJAN" \
-      description="Dockerized Flask Quiz Application" \
+      description="BrainCheck Flask BrainCheck" \
       version="1.0.0"
 
 WORKDIR /app

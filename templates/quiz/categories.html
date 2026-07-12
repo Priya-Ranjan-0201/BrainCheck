@@ -1,93 +1,69 @@
 {% extends "base.html" %}
 
-{% block title %}Quiz Categories{% endblock %}
+{% block title %}Pick a Quiz{% endblock %}
 
 {% block content %}
-<div class="animated-fade-in" id="categories-page-container">
-    
-    <!-- Page Header -->
-    <div class="row mb-4" id="categories-header-section">
-        <div class="col-12 text-center text-md-start">
-            <h1 class="h2 fw-extrabold text-primary mb-2" id="categories-page-title">
-                <i class="bi bi-collection-play-fill me-2 text-info"></i> Available Quizzes
-            </h1>
-            <p class="text-muted mb-0" id="categories-page-subtitle">Choose a topic below to test your skills. Each quiz has a 5-minute time limit.</p>
-        </div>
-    </div>
 
-    <!-- Categories Grid -->
-    <div class="row g-4" id="categories-grid-section">
-        {% for cat in categories %}
-            <div class="col-12 col-md-6 col-lg-4" id="category-col-{{ cat.id }}">
-                <div class="card custom-card hover-action h-100 border-0 shadow-sm" id="category-card-{{ cat.id }}">
-                    <div class="card-body p-4 d-flex flex-column justify-content-between">
-                        
-                        <!-- Topic Info -->
-                        <div>
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="dashboard-stat-icon bg-light-blue text-primary me-3 rounded-circle shadow-sm" id="category-icon-wrapper-{{ cat.id }}">
-                                    <!-- Dynamic icons based on category names -->
-                                    {% if 'python' in cat.name.lower() %}
-                                        <i class="bi bi-terminal-fill fs-4 text-primary"></i>
-                                    {% elif 'javascript' in cat.name.lower() or 'js' in cat.name.lower() %}
-                                        <i class="bi bi-code-slash fs-4 text-warning"></i>
-                                    {% elif 'docker' in cat.name.lower() %}
-                                        <i class="bi bi-box-seam-fill fs-4 text-info"></i>
-                                    {% else %}
-                                        <i class="bi bi-patch-question-fill fs-4 text-success"></i>
-                                    {% endif %}
-                                </div>
-                                <h3 class="h5 fw-bold text-dark mb-0" id="category-title-{{ cat.id }}">{{ cat.name }}</h3>
-                            </div>
-                            
-                            <!-- Static descriptions for aesthetic premium feel -->
-                            <p class="text-muted small mb-4" id="category-desc-{{ cat.id }}">
-                                {% if 'python' in cat.name.lower() %}
-                                    Master Python basics, data structures, variables, function arguments, and object-oriented programming.
-                                {% elif 'javascript' in cat.name.lower() or 'js' in cat.name.lower() %}
-                                    Test your understanding of JavaScript arrays, asynchronous runtime, ES6 variables, and closures.
-                                {% elif 'docker' in cat.name.lower() %}
-                                    Validate your containerization expertise. Covers Dockerfiles, orchestration compose files, and commands.
-                                {% else %}
-                                    Sharpen your brain with miscellaneous logical reasoning, historical, scientific, and trivia queries.
-                                {% endif %}
-                            </p>
-                        </div>
-                        
-                        <!-- Quiz Meta & Action Button -->
-                        <div class="border-top pt-3 mt-auto d-flex justify-content-between align-items-center" id="category-footer-{{ cat.id }}">
-                            <span class="badge bg-light text-primary border rounded-pill px-3 py-2 small" id="category-badge-{{ cat.id }}">
-                                <i class="bi bi-patch-question me-1"></i> {{ cat.question_count }} Questions
-                            </span>
-                            
-                            {% if cat.question_count > 0 %}
-                                <a href="{{ url_for('quiz.start_quiz', category_id=cat.id) }}" 
-                                   class="btn btn-primary rounded-pill px-4 py-2 small fw-semibold transition-btn shadow-sm" id="category-start-btn-{{ cat.id }}">
-                                    Start Quiz <i class="bi bi-chevron-right ms-1"></i>
-                                </a>
-                            {% else %}
-                                <button class="btn btn-outline-secondary rounded-pill px-4 py-2 small fw-semibold" disabled id="category-disabled-btn-{{ cat.id }}">
-                                    Coming Soon
-                                </button>
-                            {% endif %}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <!-- Empty State -->
-            <div class="col-12" id="no-categories-col">
-                <div class="card custom-card border-0 shadow-sm py-5 text-center" id="no-categories-card">
-                    <div class="card-body">
-                        <i class="bi bi-collection fs-1 text-muted mb-3 d-block"></i>
-                        <h4 class="fw-bold text-dark">No Quizzes Available</h4>
-                        <p class="text-muted">The administrators haven't uploaded any quizzes or questions yet.</p>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
+<div class="mb-4">
+    <h2 class="fw-bold">Available Quizzes</h2>
+    <p class="text-muted">Pick a topic below. Each quiz is timed at 5 minutes.</p>
 </div>
+
+<div class="row g-3">
+    {% for cat in categories %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3 gap-2">
+                        {% if 'python' in cat.name.lower() %}
+                            <i class="bi bi-terminal-fill fs-3 text-primary"></i>
+                        {% elif 'javascript' in cat.name.lower() %}
+                            <i class="bi bi-code-slash fs-3 text-warning"></i>
+                        {% elif 'docker' in cat.name.lower() %}
+                            <i class="bi bi-box-seam fs-3 text-info"></i>
+                        {% else %}
+                            <i class="bi bi-patch-question-fill fs-3 text-success"></i>
+                        {% endif %}
+                        <h5 class="fw-bold mb-0">{{ cat.name }}</h5>
+                    </div>
+
+                    <p class="text-muted small flex-grow-1">
+                        {% if 'python' in cat.name.lower() %}
+                            Variables, loops, functions, data structures and more.
+                        {% elif 'javascript' in cat.name.lower() %}
+                            ES6, DOM, async, closures and core JS concepts.
+                        {% elif 'docker' in cat.name.lower() %}
+                            Containers, images, Dockerfiles and Compose basics.
+                        {% else %}
+                            Science, history, geography and general trivia.
+                        {% endif %}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="badge bg-light text-dark border">
+                            {{ cat.question_count }} questions
+                        </span>
+                        {% if cat.question_count > 0 %}
+                            <a href="{{ url_for('quiz.start_quiz', category_id=cat.id) }}"
+                               class="btn btn-primary btn-sm">
+                                Start <i class="bi bi-chevron-right ms-1"></i>
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm" disabled>Coming Soon</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-collection d-block fs-1 mb-3"></i>
+                <h5>No quizzes available yet</h5>
+                <p>Check back later or contact an admin.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
 {% endblock %}

@@ -1,5 +1,5 @@
-# ============================================================
-# Dockerized Quiz Application – .dockerignore
+﻿# ============================================================
+# BrainCheck BrainChecklication – .dockerignore
 # Excludes files from the Docker build context to:
 #   • Speed up builds (smaller context sent to the daemon)
 #   • Reduce image size (nothing unnecessary gets COPY'd)

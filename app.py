@@ -1,9 +1,6 @@
 """
-Dockerized Quiz Application Pipeline
-Main Application Entry Point
-
-This module initializes the Flask application, configures extensions,
-registers blueprints, and seeds the database with default data.
+BrainCheck - Flask Quiz App
+Sets up the app, connects extensions, and seeds the database on first run.
 """
 
 import os
@@ -14,21 +11,18 @@ from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash
 from config import Config
 
-# ──────────────────────────────────────────────
-# Extension instances (shared across modules)
-# ──────────────────────────────────────────────
+# extensions - shared between modules
 db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 
 
 def create_app(config_class=Config):
-    """Application factory – creates and configures the Flask app."""
+    """Creates and returns the Flask application."""
 
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # ── Initialise extensions ────────────────
     db.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
@@ -37,14 +31,12 @@ def create_app(config_class=Config):
     login_manager.login_message = "Please log in to access this page."
     login_manager.login_message_category = "warning"
 
-    # ── User loader for Flask-Login ──────────
     from models.models import User
 
     @login_manager.user_loader
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
-    # ── Register blueprints ──────────────────
     from routes.auth import auth_bp
     from routes.main import main_bp
     from routes.quiz import quiz_bp
@@ -55,12 +47,10 @@ def create_app(config_class=Config):
     app.register_blueprint(quiz_bp)
     app.register_blueprint(admin_bp)
 
-    # ── Root redirect ────────────────────────
     @app.route("/")
     def index():
         return redirect(url_for("main.dashboard"))
 
-    # ── Create tables & seed data ────────────
     with app.app_context():
         db_uri = app.config.get("SQLALCHEMY_DATABASE_URI")
         if db_uri and db_uri.startswith("sqlite:///"):
@@ -75,15 +65,15 @@ def create_app(config_class=Config):
 
 
 def _seed_defaults(app):
-    """Seed the database with an admin user and sample quiz data."""
+    """Seeds the database with default admin account and sample questions."""
 
     from models.models import User, QuizCategory, Question
 
-    # ── Admin user ───────────────────────────
-    if not User.query.filter_by(email="admin@quizapp.com").first():
+    # create admin if not already there
+    if not User.query.filter_by(email="admin@braincheck.com").first():
         admin = User(
             fullname="Admin",
-            email="admin@quizapp.com",
+            email="admin@braincheck.com",
             password_hash=generate_password_hash(
                 os.environ.get("ADMIN_PASSWORD", "Admin@123")
             ),
@@ -92,14 +82,12 @@ def _seed_defaults(app):
         db.session.add(admin)
         db.session.commit()
 
-    # ── Sample categories ────────────────────
     sample_categories = ["Python", "JavaScript", "Docker", "General Knowledge"]
     for name in sample_categories:
         if not QuizCategory.query.filter_by(name=name).first():
             db.session.add(QuizCategory(name=name))
     db.session.commit()
 
-    # ── Sample questions (Python category) ───
     python_cat = QuizCategory.query.filter_by(name="Python").first()
     if python_cat and Question.query.filter_by(category_id=python_cat.id).count() == 0:
         questions = [
@@ -152,7 +140,6 @@ def _seed_defaults(app):
         db.session.add_all(questions)
         db.session.commit()
 
-    # ── Sample questions (Docker category) ───
     docker_cat = QuizCategory.query.filter_by(name="Docker").first()
     if docker_cat and Question.query.filter_by(category_id=docker_cat.id).count() == 0:
         questions = [
@@ -205,7 +192,6 @@ def _seed_defaults(app):
         db.session.add_all(questions)
         db.session.commit()
 
-    # ── Sample questions (JavaScript category) ─
     js_cat = QuizCategory.query.filter_by(name="JavaScript").first()
     if js_cat and Question.query.filter_by(category_id=js_cat.id).count() == 0:
         questions = [
@@ -258,7 +244,6 @@ def _seed_defaults(app):
         db.session.add_all(questions)
         db.session.commit()
 
-    # ── Sample questions (General Knowledge) ─
     gk_cat = QuizCategory.query.filter_by(name="General Knowledge").first()
     if gk_cat and Question.query.filter_by(category_id=gk_cat.id).count() == 0:
         questions = [
@@ -312,9 +297,6 @@ def _seed_defaults(app):
         db.session.commit()
 
 
-# ──────────────────────────────────────────────
-# Run the application
-# ──────────────────────────────────────────────
 if __name__ == "__main__":
     app = create_app()
     app.run(

@@ -1,91 +1,25 @@
-# ============================================================
-# Dockerized Quiz Application – Docker Compose Configuration
-# Production-ready orchestration for the Flask Quiz App
-# ============================================================
-#
-# Usage:
-#   docker compose up -d          → Start in detached mode
-#   docker compose down           → Stop and remove containers
-#   docker compose logs -f web    → Stream live logs
-#
-# The .env file in the project root is automatically loaded
-# by Docker Compose and feeds all ${VARIABLE} references.
-# ============================================================
+# BrainCheck - docker-compose.yml
+# Usage: docker compose up -d --build
 
 services:
-  # ── Flask Web Application ──────────────────────────────────
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: quizapp-pipeline:latest
-    container_name: quizapp_web
-
-    # ── Port mapping (host:container) ────────────────────────
+    build: .
+    image: braincheck:latest
+    container_name: braincheck_web
     ports:
-      - "${PORT:-5000}:${PORT:-5000}"
-
-    # ── Persistent storage ───────────────────────────────────
-    # Named volume keeps the SQLite database intact across
-    # container rebuilds and restarts.
+      - "5000:5000"
     volumes:
-      - quiz_data:/app/instance
-
-    # ── Environment variables ────────────────────────────────
-    # Values are read from the .env file at the project root.
-    # Inline defaults guarantee the container can always start.
+      - braincheck_data:/app/instance
     environment:
-      # Flask runtime
       - FLASK_APP=app.py
-      - FLASK_ENV=${FLASK_ENV:-production}
-      - FLASK_HOST=${FLASK_HOST:-0.0.0.0}
-      - FLASK_PORT=${PORT:-5000}
-      - FLASK_DEBUG=${FLASK_DEBUG:-False}
-
-      # Security
-      - SECRET_KEY=${SECRET_KEY:-quiz-app-change-me-in-production}
-
-      # Database (SQLite path inside the container)
-      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/instance/database.db}
-
-      # Session cookie hardening
-      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-False}
-      - SESSION_COOKIE_HTTPONLY=${SESSION_COOKIE_HTTPONLY:-True}
-      - SESSION_COOKIE_SAMESITE=${SESSION_COOKIE_SAMESITE:-Lax}
-
-      # Admin seed account
-      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@quizapp.com}
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - SECRET_KEY=${SECRET_KEY:-braincheck-secret-key-change-me}
+      - DATABASE_URL=sqlite:////app/instance/database.db
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@braincheck.com}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Admin@123}
-
-      # Application settings
       - QUIZ_TIME_LIMIT=${QUIZ_TIME_LIMIT:-300}
-
-    # ── Restart policy ───────────────────────────────────────
-    # Always restart unless the operator explicitly stops it.
     restart: unless-stopped
-
-    # ── Resource limits (prevents runaway memory usage) ──────
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: "0.50"
-        reservations:
-          memory: 128M
-          cpus: "0.25"
-
-    # ── Logging ──────────────────────────────────────────────
-    # Rotate logs to prevent disk exhaustion on long-running
-    # deployments.
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-    # ── Healthcheck ──────────────────────────────────────────
-    # Compose marks the container as "healthy" only when the
-    # Flask app responds. Pairs with the Dockerfile HEALTHCHECK.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
       interval: 30s
@@ -93,11 +27,6 @@ services:
       start_period: 15s
       retries: 3
 
-# ── Named volumes ────────────────────────────────────────────
-# Managed by Docker; data persists even if the container is
-# removed. Use `docker volume inspect quiz_data` to locate
-# the data on the host filesystem.
 volumes:
-  quiz_data:
+  braincheck_data:
     driver: local
-    name: quizapp_sqlite_data

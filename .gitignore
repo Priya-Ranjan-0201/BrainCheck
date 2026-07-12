@@ -1,5 +1,5 @@
 # ============================================================
-# Dockerized Quiz Application – .gitignore
+# BrainCheck – .gitignore
 # Keeps the repository clean by excluding generated, secret,
 # and environment-specific files from version control.
 # ============================================================
@@ -71,3 +71,10 @@ Desktop.ini
 *.tmp
 *.temp
 *.bak
+
+# ── Project documents (local only, not for GitHub) ──────────
+PROJECT_REPORT.md
+DEPLOYMENT_CHECKLIST.md
+DOCKER_COMMANDS.md
+DOCKER_COMPOSE_COMMANDS.md
+GITHUB_SETUP.md
