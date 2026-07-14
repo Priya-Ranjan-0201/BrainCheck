@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BrainCheck - A simple quiz app for DevOps demonstration">
+    <title>BrainCheck - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 BrainCheck</h1>
+        <p class="subtitle">A simple quiz to test your tech knowledge</p>
+        <p class="description">5 multiple-choice questions &bull; No login required</p>
+        <a href="{{ url_for('quiz') }}" class="btn">Start Quiz</a>
+        <footer>
+            <p>Built to demonstrate DevOps &mdash; Docker &bull; CI/CD &bull; Automated Testing</p>
+        </footer>
+    </div>
+</body>
+</html>

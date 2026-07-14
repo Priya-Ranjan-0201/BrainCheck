@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainCheck - Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Your Result</h1>
+
+        <div class="score-card">
+            <div class="score-circle {% if percentage >= 80 %}score-high{% elif percentage >= 50 %}score-mid{% else %}score-low{% endif %}">
+                {{ percentage }}%
+            </div>
+            <p class="score-text">You got <strong>{{ score }}</strong> out of <strong>{{ total }}</strong> correct</p>
+
+            {% if percentage == 100 %}
+                <p class="message">🎉 Perfect Score! Outstanding!</p>
+            {% elif percentage >= 60 %}
+                <p class="message">👏 Good job! Well done!</p>
+            {% else %}
+                <p class="message">📚 Keep learning! You'll do better next time.</p>
+            {% endif %}
+        </div>
+
+        <div class="actions">
+            <a href="{{ url_for('quiz') }}" class="btn">Try Again</a>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">Home</a>
+        </div>
+    </div>
+</body>
+</html>

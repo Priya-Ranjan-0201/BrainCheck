@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainCheck - Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 BrainCheck Quiz</h1>
+        <p class="subtitle">Answer all 5 questions, then submit.</p>
+
+        <form action="{{ url_for('result') }}" method="POST">
+            {% for q in questions %}
+            <div class="question-card">
+                <h3>Q{{ q.id }}. {{ q.question }}</h3>
+                {% for option in q.options %}
+                <label class="option">
+                    <input type="radio" name="question_{{ q.id }}" value="{{ loop.index0 }}" required>
+                    {{ option }}
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn">Submit Answers</button>
+        </form>
+    </div>
+</body>
+</html>
