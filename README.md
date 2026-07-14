@@ -77,8 +77,8 @@ BRAINCHECK/
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/BRAINCHECK.git
-cd BRAINCHECK
+git clone https://github.com/Priya-Ranjan-0201/BrainCheck.git
+cd BrainCheck
 
 # Run with Docker Compose (one command!)
 docker compose up --build
