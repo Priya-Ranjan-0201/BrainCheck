@@ -132,7 +132,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
    - Provide a clear, descriptive PR title.
    - Describe the changes made and link any related issues.
    - Attach screenshots or terminal outputs where applicable.
-   - Ensure the automated GitHub Actions CI checks (`ci.yml` and `docker-ci.yml`) pass.
+   - Ensure the automated GitHub Actions CI check (`docker-ci.yml`) passes.
 
 ---
 

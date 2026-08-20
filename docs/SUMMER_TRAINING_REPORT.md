@@ -977,7 +977,7 @@ jobs:
 | **Local Container Access** | `http://localhost:5000` |
 | **Default Administrator Login** | `admin@braincheck.com` / `Admin@123` |
 | **Student Registration Route** | `http://localhost:5000/auth/register` |
-| **CI/CD Pipeline Configurations** | `.github/workflows/ci.yml` & `.github/workflows/docker-ci.yml` |
+| **CI/CD Pipeline Configuration** | `.github/workflows/docker-ci.yml` |
 
 ---
 

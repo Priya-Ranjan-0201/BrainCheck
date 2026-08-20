@@ -290,7 +290,6 @@ BrainCheck/
 │
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                # Standard CI workflow (Test + Docker build)
 │       └── docker-ci.yml         # Advanced pipeline (Flake8 Lint + Test + Live Healthcheck)
 │
 ├── docs/                         # Detailed architectural & technical manuals
