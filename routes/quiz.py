@@ -24,7 +24,7 @@ from flask import (
     current_app,
 )
 from flask_login import login_required, current_user
-from app import db
+from extensions import db
 from models.models import QuizCategory, Question, QuizAttempt
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")

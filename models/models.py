@@ -3,7 +3,7 @@
 
 from datetime import datetime, timezone
 from flask_login import UserMixin
-from app import db
+from extensions import db
 
 
 class User(UserMixin, db.Model):

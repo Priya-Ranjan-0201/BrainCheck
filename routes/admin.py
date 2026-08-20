@@ -12,7 +12,7 @@ from functools import wraps
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from app import db
+from extensions import db
 from models.models import User, QuizCategory, Question, QuizAttempt
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")

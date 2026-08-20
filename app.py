@@ -5,16 +5,9 @@ Sets up the app, connects extensions, and seeds the database on first run.
 
 import os
 from flask import Flask, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_wtf.csrf import CSRFProtect
+from extensions import db, login_manager, csrf
 from werkzeug.security import generate_password_hash
 from config import Config
-
-# extensions - shared between modules
-db = SQLAlchemy()
-login_manager = LoginManager()
-csrf = CSRFProtect()
 
 
 def create_app(config_class=Config):
