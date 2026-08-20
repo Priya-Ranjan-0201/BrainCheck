@@ -522,7 +522,7 @@ Explore the comprehensive technical manuals in the `docs/` folder:
 This project was developed as a **Capstone Project** for **B.Tech Computer Science and Engineering (CSE)** at **Lovely Professional University (LPU), Punjab**.
 
 - **Author & Developer**: **[Priya Ranjan](https://github.com/Priya-Ranjan-0201)**
-- **Registration Number**: `12211915`
+- **Registration Number**: `12419647`
 - **GitHub Repository**: **[https://github.com/Priya-Ranjan-0201/BrainCheck](https://github.com/Priya-Ranjan-0201/BrainCheck)**
 
 ---

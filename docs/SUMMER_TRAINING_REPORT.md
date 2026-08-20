@@ -7,7 +7,7 @@
 
 **Submitted by:**  
 **Priya Ranjan**  
-**Registration Number:** 12211915  
+**Registration Number:** 12419647  
 **B.Tech CSE — [Semester V]**
 
 ---
@@ -25,14 +25,14 @@ The work presented in this report, including the architectural design, backend e
 
 \
 **Priya Ranjan**  
-Registration Number: 12211915  
+Registration Number: 12419647  
 Date: 18/08/2026  
 
 ---
 
 ## CERTIFICATE
 
-This is to certify that **Priya Ranjan** (Registration Number: **12211915**), a student of **Bachelor of Technology in Computer Science and Engineering**, School of Computer Science and Engineering, Lovely Professional University, Punjab, has successfully completed his Summer Training / Internship and submitted the capstone project report entitled **“BrainCheck – A Fully Containerized MCQ Quiz Platform with Multi-Stage Docker Architecture and Automated CI/CD”** in partial fulfilment of the requirements for the award of the degree of **B.Tech Computer Science and Engineering**.
+This is to certify that **Priya Ranjan** (Registration Number: **12419647**), a student of **Bachelor of Technology in Computer Science and Engineering**, School of Computer Science and Engineering, Lovely Professional University, Punjab, has successfully completed his Summer Training / Internship and submitted the capstone project report entitled **“BrainCheck – A Fully Containerized MCQ Quiz Platform with Multi-Stage Docker Architecture and Automated CI/CD”** in partial fulfilment of the requirements for the award of the degree of **B.Tech Computer Science and Engineering**.
 
 The project work embodies original implementation carried out with dedication and technical proficiency under standard academic supervision during the Summer Term, 2026.
 
@@ -59,7 +59,7 @@ Finally, I acknowledge the vibrant open-source communities and documentation mai
 
 \
 **Priya Ranjan**  
-Registration Number: 12211915  
+Registration Number: 12419647  
 
 ---
 
